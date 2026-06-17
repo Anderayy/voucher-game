@@ -2,15 +2,24 @@
 
 Website demo jual beli voucher game dengan tampilan dark navy + lime, animasi interaktif, dan alur SPA multi-screen.
 
-## Cara buka
+## Cara buka lokal
 
-Buka langsung `index.html`, atau jalankan server lokal:
+Project ini sudah memakai Node.js + Express agar kompatibel dengan hosting Node.js seperti Hostinger.
 
 ```bash
-python -m http.server 5173 --bind 127.0.0.1
+npm install
+npm start
 ```
 
-Lalu akses `http://127.0.0.1:5173/`.
+Lalu akses `http://localhost:3000/`.
+
+## Deploy Hostinger Node.js
+
+- Install command: `npm install`
+- Start command: `npm start`
+- Entry point: `server.js`
+- Node version: 18 atau lebih baru
+- Health check: `/health`
 
 ## Demo fitur
 
