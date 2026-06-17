@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ngegameyukz - Top Up Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a class="logo" href="#" data-screen="home">ngegameyukz</a>
+      <label class="search">
+        <span class="icon-search"></span>
+        <input id="searchInput" type="search" placeholder="Cari Game atau Voucher">
+      </label>
+      <nav class="main-nav" aria-label="Navigasi utama">
+        <a class="active" href="#" data-screen="home"><span class="nav-ico">TOP</span>Topup</a>
+        <a href="#" data-screen="transactions"><span class="nav-ico">TRX</span>Cek Transaksi</a>
+        <a href="#" data-screen="leaderboard"><span class="nav-ico">RANK</span>Leaderboard</a>
+        <a href="#" data-screen="calculator"><span class="nav-ico">CALC</span>Kalkulator</a>
+        <a href="#" data-screen="admin"><span class="nav-ico">ADM</span>Admin</a>
+      </nav>
+      <button class="locale" id="localeToggle"><span>ID</span> / IDR</button>
+      <button class="login-button" data-screen="auth">Masuk</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="screen home-screen active" id="homeScreen">
+      <section class="hero-card reveal">
+        <div class="hero-visual" id="heroVisual"></div>
+        <div class="hero-copy">
+          <span class="promo-pill" id="heroBadge">PROMO TERBATAS</span>
+          <h1 id="heroTitle">Nikmati Bonus Topup<br>hingga 50%</h1>
+          <button class="cta" data-screen="detail">Top Up Sekarang <span>-></span></button>
+        </div>
+      </section>
+      <div class="slider-dots" id="heroDots"><button class="active"></button><button></button><button></button></div>
+
+      <section class="section-head reveal">
+        <div class="title-row">
+          <span class="bolt">Z</span>
+          <h2>Flash Sale Hari Ini</h2>
+          <span class="countdown" id="countdown">02 : 45 : 07</span>
+        </div>
+        <a href="#" id="showAllFlash">Lihat Semua</a>
+      </section>
+      <div class="flash-grid reveal" id="flashGrid"></div>
+
+      <section class="section-head game-head reveal">
+        <h2>Game Populer</h2>
+        <div class="filter-tabs">
+          <button class="active" data-filter="all">Semua</button>
+          <button data-filter="mobile">Mobile</button>
+          <button data-filter="pc">PC / Console</button>
+        </div>
+      </section>
+      <div class="popular-grid reveal" id="popularGrid"></div>
+      <div class="center-action">
+        <button class="more-button" id="loadMoreGames">Lihat Lebih Banyak</button>
+      </div>
+
+      <section class="benefit-grid reveal">
+        <article>
+          <span class="benefit-icon">Z</span>
+          <h3>Proses Cepat</h3>
+          <p>Transaksi diproses secara instan kurang dari 60 detik secara otomatis oleh sistem kami.</p>
+        </article>
+        <article>
+          <span class="benefit-icon">24</span>
+          <h3>Layanan 24/7</h3>
+          <p>Customer Service siap membantu kapan saja melalui chat WhatsApp dan Live Chat.</p>
+        </article>
+        <article>
+          <span class="benefit-icon">OK</span>
+          <h3>Aman & Terpercaya</h3>
+          <p>Situs resmi yang melayani ribuan transaksi harian dengan sistem keamanan enkripsi terkini.</p>
+        </article>
+      </section>
+    </section>
+
+    <section class="screen auth-screen" id="authScreen">
+      <div class="auth-brand">
+        <h1>ngegameyukz</h1>
+        <p>Level up your gaming experience.</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <div class="auth-tabs">
+          <button class="active" type="button" data-auth-tab="login">Login</button>
+          <button type="button" data-auth-tab="register">Register</button>
+        </div>
+        <label>Username or Email
+          <div class="input-icon user"><input id="authName" placeholder="Enter your identifier"></div>
+        </label>
+        <label>Password
+          <div class="input-icon lock"><input type="password" placeholder="Password"></div>
+        </label>
+        <a class="forgot" href="#" id="forgotPassword">Forgot Password?</a>
+        <button class="submit-auth" type="submit">MASUK SEKARANG</button>
+        <div class="divider"><span>atau hubungkan dengan</span></div>
+        <div class="social-login">
+          <button type="button" data-social="Google">Google</button>
+          <button type="button" data-social="Discord">Discord</button>
+          <button type="button" data-social="Shield">Shield</button>
+        </div>
+      </form>
+      <button class="staff-link" data-screen="admin">Staff Access Portal</button>
+      <p class="auth-copy">© 2024 ngegameyukz. All Rights Reserved.</p>
+    </section>
+
+    <section class="screen detail-screen" id="detailScreen">
+      <section class="product-hero reveal">
+        <img id="detailCover" src="assets/hero-esports.png" alt="Mobile Legends">
+        <div>
+          <h1 id="detailTitle">Mobile Legends: Bang Bang</h1>
+          <p id="detailDesc">Top Up Diamonds Mobile Legends instan, murah, dan terpercaya. Proses hanya hitungan detik.</p>
+          <div class="rating">STAR STAR STAR STAR STAR <strong>4.98/5.0</strong> (150,000+ Penilaian)</div>
+        </div>
+      </section>
+
+      <div class="checkout-grid">
+        <div class="checkout-main">
+          <section class="order-step reveal">
+            <h2><span>1</span>Masukkan Data Akun</h2>
+            <div class="field-grid">
+              <label>User ID<input id="userIdInput" placeholder="Contoh: 12345678"></label>
+              <label>Server ID<input id="serverInput" placeholder="Contoh: 1234"></label>
+            </div>
+            <p>ID akun akan dipakai untuk validasi tujuan top up.</p>
+          </section>
+
+          <section class="order-step reveal">
+            <h2><span>2</span>Pilih Nominal</h2>
+            <div class="nominal-grid" id="nominalGrid"></div>
+          </section>
+
+          <section class="order-step reveal">
+            <h2><span>3</span>Detail Kontak</h2>
+            <label>Nomor WhatsApp<input id="phoneInput" placeholder="+62 81234567890"></label>
+            <p>Bukti pembayaran akan dikirimkan ke nomor WhatsApp Anda.</p>
+          </section>
+
+          <section class="order-step reveal">
+            <h2><span>4</span>Kode Promo</h2>
+            <div class="promo-row">
+              <input id="promoInput" placeholder="Masukkan kode promo (Opsional)">
+              <button id="applyPromo">Gunakan</button>
+            </div>
+          </section>
+
+          <section class="order-step reveal">
+            <h2><span>5</span>Pilih Pembayaran</h2>
+            <div class="payment-options" id="paymentOptions">
+              <button class="active" data-payment="QRIS"><span class="pay-logo"></span><strong>QRIS</strong><small>OVO, GoPay, Dana, LinkAja</small><b id="payPrice">Rp 14.200</b></button>
+              <button data-payment="DANA"><span class="pay-logo blue"></span><strong>DANA</strong><small>Saldo DANA</small><b id="danaPrice">Rp 14.200</b></button>
+              <button data-payment="BCA Virtual Account"><span class="pay-logo bank"></span><strong>BCA Virtual Account</strong><small>Transfer Bank Otomatis</small><b id="bcaPrice">Rp 14.200</b></button>
+            </div>
+          </section>
+        </div>
+
+        <aside class="summary-stack">
+          <section class="summary-card sticky-card reveal">
+            <h2>Order Summary</h2>
+            <dl>
+              <div><dt>Produk</dt><dd id="summaryProduct">Mobile Legends: Bang Bang</dd></div>
+              <div><dt>Nominal</dt><dd id="summaryItem">50 Diamonds</dd></div>
+              <div><dt>Metode</dt><dd id="summaryPayment">QRIS</dd></div>
+            </dl>
+            <div class="total">
+              <span>Total Bayar</span>
+              <strong id="summaryPrice">Rp 14.200</strong>
+              <small id="discountNote">Termasuk PPN & Biaya Admin</small>
+            </div>
+            <button class="order-now" id="orderNow">PESAN SEKARANG!</button>
+            <ul>
+              <li>Pembayaran Aman & Terenkripsi</li>
+              <li>Pengiriman Instan 1-3 Detik</li>
+            </ul>
+          </section>
+          <section class="live-card reveal">
+            <h3><span></span>LIVE TRANSAKSI</h3>
+            <div id="liveFeed"></div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen transactions-screen" id="transactionsScreen">
+      <section class="utility-hero reveal">
+        <h1>Cek Transaksi</h1>
+        <p>Masukkan invoice untuk melihat status pesanan secara instan.</p>
+        <div class="track-box">
+          <input id="trackInput" placeholder="Contoh: TX-90214 atau INV-2841-ML">
+          <button id="trackButton">Lacak Pesanan</button>
+        </div>
+      </section>
+      <section class="track-result reveal" id="trackResult">
+        <span>Status siap dicek</span>
+        <h2>Belum ada invoice diproses</h2>
+        <p>Gunakan invoice demo: TX-90214, TX-90215, INV-2841-ML.</p>
+      </section>
+      <section class="recent-strip reveal" id="recentStrip"></section>
+    </section>
+
+    <section class="screen leaderboard-screen" id="leaderboardScreen">
+      <section class="utility-hero reveal">
+        <h1>Leaderboard Gamer</h1>
+        <p>Ranking pembeli aktif berdasarkan total transaksi dan loyalty points.</p>
+      </section>
+      <div class="leaderboard-grid reveal" id="leaderboardGrid"></div>
+    </section>
+
+    <section class="screen calculator-screen" id="calculatorScreen">
+      <section class="utility-hero reveal">
+        <h1>Kalkulator Top Up</h1>
+        <p>Hitung estimasi harga diamond atau voucher sebelum checkout.</p>
+      </section>
+      <section class="calculator-card reveal">
+        <label>Pilih Game<select id="calcGame"></select></label>
+        <label>Jumlah Item<input id="calcQty" type="number" min="1" value="1"></label>
+        <label>Paket<select id="calcPackage"></select></label>
+        <button id="calcButton">Hitung Total</button>
+        <div class="calc-result">
+          <span>Estimasi Total</span>
+          <strong id="calcTotal">Rp 14.200</strong>
+          <p id="calcDesc">Mobile Legends - 50 Diamonds x 1</p>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen promo-screen" id="promoScreen">
+      <section class="utility-hero reveal">
+        <h1>Promotion Center</h1>
+        <p>Klaim kode promo aktif dan pakai saat checkout.</p>
+      </section>
+      <div class="promo-grid reveal">
+        <article><span>NYZ50</span><h2>Bonus Topup 50%</h2><p>Diskon demo untuk checkout pertama.</p><button data-copy-promo="NYZ50">Klaim</button></article>
+        <article><span>FLASH10</span><h2>Flash Sale Extra</h2><p>Potongan 10% untuk produk flash sale.</p><button data-copy-promo="FLASH10">Klaim</button></article>
+        <article><span>LOYAL5</span><h2>Loyalty Member</h2><p>Tambahan diskon untuk member aktif.</p><button data-copy-promo="LOYAL5">Klaim</button></article>
+      </div>
+    </section>
+
+    <section class="screen admin-screen" id="adminScreen">
+      <aside class="admin-sidebar">
+        <a class="logo" href="#" data-screen="home">ngegameyukz</a>
+        <nav>
+          <button class="active" data-admin-tab="overview">Dashboard</button>
+          <button data-admin-tab="products">Products</button>
+          <button data-admin-tab="transactions">Transactions</button>
+          <button data-admin-tab="leaderboard">Leaderboard</button>
+          <button data-admin-tab="settings">Settings</button>
+        </nav>
+        <div class="help-card">
+          <span>CS</span>
+          <p>Butuh bantuan teknis?</p>
+          <strong>Hubungi Kami</strong>
+        </div>
+      </aside>
+      <section class="admin-main">
+        <div class="admin-top">
+          <div>
+            <h1 id="adminTitle">System Overview</h1>
+            <p id="adminSubtitle">Monitoring real-time platform performance</p>
+          </div>
+          <label class="admin-search"><span class="icon-search"></span><input id="adminSearch" placeholder="Search data..."></label>
+          <div class="admin-profile"><span>Admin_Rangga</span><small>SUPER ADMIN</small></div>
+        </div>
+        <div id="adminContent"></div>
+      </section>
+    </section>
+
+    <section class="screen user-screen" id="userScreen">
+      <section class="user-topbar">
+        <a class="logo" href="#" data-screen="home">ngegameyukz</a>
+        <label class="search user-search"><span class="icon-search"></span><input placeholder="Cari Game atau Voucher"></label>
+        <nav>
+          <a href="#" data-screen="home">Topup</a>
+          <a href="#" data-screen="transactions">Cek Transaksi</a>
+          <a href="#" data-screen="leaderboard">Leaderboard</a>
+          <a href="#" data-screen="calculator">Kalkulator</a>
+        </nav>
+        <button class="balance" id="topupBalance">Rp 1.250.000</button>
+        <button class="avatar-button" data-screen="auth"></button>
+      </section>
+      <section class="user-dashboard">
+        <div class="welcome-card reveal">
+          <div class="profile-phone"></div>
+          <div>
+            <h1 id="welcomeName">Halo, Rizky Perdana!</h1>
+            <p>Selamat datang kembali di pusat kendali gaming kamu.</p>
+            <span>ID: 8829102</span>
+            <span>1,240 Loyalty Points</span>
+          </div>
+          <button id="addBalance">Isi Saldo</button>
+        </div>
+        <div class="user-stat reveal"><strong>24</strong><span>Total Pesanan</span></div>
+        <div class="user-stat reveal"><strong>3</strong><span>Voucher Aktif</span></div>
+      </section>
+      <section class="user-content">
+        <div class="recent-panel reveal">
+          <div class="panel-head"><h2>Transaksi Terakhir</h2><a href="#" data-screen="transactions">Lihat Semua</a></div>
+          <table>
+            <thead><tr><th>Invoice</th><th>Game</th><th>Item</th><th>Nominal</th><th>Status</th></tr></thead>
+            <tbody id="userRows"></tbody>
+          </table>
+          <div class="voucher-title"><h2>Voucher Saya</h2><span>3 Voucher Tersedia</span></div>
+          <div class="voucher-list">
+            <article><span>GP</span><div><h3>Google Play IDR 50K</h3><p>Dibeli 12 Okt 2024</p><button data-copy-code="NYZ-GP50-2024">Salin Kode</button></div></article>
+            <article><span>SW</span><div><h3>Steam Wallet $10</h3><p>Dibeli 08 Okt 2024</p><button data-copy-code="NYZ-STM10-2024">Salin Kode</button></div></article>
+          </div>
+        </div>
+        <aside class="settings-stack">
+          <section class="settings-card reveal">
+            <h2>Pengaturan Akun</h2>
+            <button data-setting="Edit Profil">Edit Profil <span>></span></button>
+            <button data-setting="Keamanan & Password">Keamanan & Password <span>></span></button>
+            <button data-setting="Notifikasi">Notifikasi <span>></span></button>
+            <hr>
+            <button class="danger" data-screen="auth">Keluar Sesi</button>
+          </section>
+          <section class="member-card reveal">
+            <small>STATUS KEANGGOTAAN</small>
+            <h2>Silver Gamer</h2>
+            <i><b></b></i>
+            <p>Sisa 260 XP lagi untuk naik ke Gold Member</p>
+            <button id="redeemPoints">Tukar Poin Hadiah</button>
+          </section>
+          <section class="support-card reveal"><span>CS</span><div><h3>Butuh Bantuan?</h3><p>Customer Service kami aktif 24/7 untuk kamu.</p></div></section>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="siteFooter">
+    <section>
+      <div class="footer-brand">
+        <h2>ngegameyukz</h2>
+        <p>Pusat Top Up Game Termurah, Tercepat, dan Terpercaya di Indonesia. Belanja Voucher Game makin seru!</p>
+        <div class="socials"><button data-social="Website">WEB</button><button data-social="Instagram">IG</button><button data-social="YouTube">YT</button></div>
+      </div>
+      <div><h3>PETA SITUS</h3><a href="#" data-screen="home">Beranda</a><a href="#" data-screen="detail">Topup Game</a><a href="#" data-screen="leaderboard">Leaderboard</a><a href="#" data-screen="calculator">Kalkulator MLBB</a></div>
+      <div><h3>DUKUNGAN</h3><a href="#" id="footerContact">Hubungi Kami</a><a href="#" id="footerGuide">Cara Pembelian</a><a href="#" data-screen="detail">Metode Pembayaran</a><a href="#" id="footerFaq">FAQ</a></div>
+      <div><h3>LEGALITAS</h3><a href="#" data-legal="Syarat & Ketentuan">Syarat & Ketentuan</a><a href="#" data-legal="Kebijakan Privasi">Kebijakan Privasi</a><a href="#" data-legal="Refund Policy">Refund Policy</a></div>
+    </section>
+    <p>© 2024 ngegameyukz. All rights reserved.</p>
+  </footer>
+
+  <button class="chat-float" id="chatButton">CHAT CS</button>
+  <aside class="chat-panel" id="chatPanel">
+    <div><strong>Live Chat CS</strong><button id="closeChat">x</button></div>
+    <p>Halo, ada yang bisa kami bantu?</p>
+    <button data-chat-choice="Cek pesanan">Cek pesanan</button>
+    <button data-chat-choice="Bantuan pembayaran">Bantuan pembayaran</button>
+    <button data-chat-choice="Masalah voucher">Masalah voucher</button>
+  </aside>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

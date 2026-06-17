@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#120b0b"/>
+      <stop offset=".55" stop-color="#221010"/>
+      <stop offset="1" stop-color="#470b10"/>
+    </linearGradient>
+    <linearGradient id="shell" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff275"/>
+      <stop offset=".52" stop-color="#ffd33f"/>
+      <stop offset="1" stop-color="#f7a900"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="720" height="720" rx="64" fill="url(#bg)"/>
+  <path d="M0 0h720v720H0z" fill="none" stroke="#d91e28" stroke-width="24"/>
+  <path d="M492 0h228v228c-67-16-128-45-181-89C515 119 493 70 492 0z" fill="#e2242c" opacity=".9"/>
+  <g filter="url(#glow)">
+    <path d="M360 177c35-67 116-41 105 37 63-46 127 15 83 75 77-5 103 86 28 122-3 91-94 137-216 137s-213-46-216-137c-75-36-49-127 28-122-44-60 20-121 83-75-11-78 70-104 105-37z" fill="url(#shell)" stroke="#ffbf1f" stroke-width="14" stroke-linejoin="round"/>
+    <path d="M360 188v262M285 230l44 220M435 230l-44 220M225 292l82 164M495 292l-82 164" fill="none" stroke="#f09b00" stroke-width="14" stroke-linecap="round"/>
+  </g>
+  <text x="92" y="610" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="900" letter-spacing="2">GARENA SHELL</text>
+  <text x="92" y="660" fill="#ff2734" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="900" letter-spacing="5">GAME VOUCHER</text>
+</svg>
