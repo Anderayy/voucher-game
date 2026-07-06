@@ -230,7 +230,6 @@ function setSession(user, token = authToken) {
   else localStorage.removeItem("nyz_user");
   userName = user?.name || "Gamer";
   $("#welcomeName").textContent = `Halo, ${userName}!`;
-  $("#topupBalance").textContent = idr.format(user?.balance || 0);
   $("#accountButton").textContent = user ? (user.role === "admin" ? "Admin" : "Akun Saya") : "Masuk";
   $("#accountButton").setAttribute("aria-label", user ? `Buka dashboard ${user.name}` : "Masuk akun");
   document.body.classList.toggle("admin-allowed", user?.role === "admin");
@@ -914,8 +913,6 @@ function setupEvents() {
     await logoutUser();
   });
   $("#redeemPoints").addEventListener("click", () => toast("Poin ditukar menjadi voucher diskon (demo)"));
-  $("#addBalance").addEventListener("click", () => toast("Form isi saldo dibuka (demo)"));
-  $("#topupBalance").addEventListener("click", () => toast("Saldo aktif: Rp 1.250.000"));
   $("#footerContact").addEventListener("click", (event) => { event.preventDefault(); $("#chatPanel").classList.add("open"); });
   $("#footerGuide").addEventListener("click", (event) => { event.preventDefault(); toast("Cara beli: pilih game, nominal, pembayaran, lalu pesan"); });
   $("#footerFaq").addEventListener("click", (event) => { event.preventDefault(); toast("FAQ dibuka (demo)"); });

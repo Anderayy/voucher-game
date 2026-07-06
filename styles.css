@@ -133,10 +133,11 @@ a {
 
 .header-inner {
   display: grid;
-  grid-template-columns: 220px minmax(240px, 420px) minmax(0, 1fr) auto auto;
-  gap: 18px;
+  grid-template-columns: 200px minmax(180px, 320px) minmax(0, 1fr) auto auto;
+  gap: 12px;
   align-items: center;
-  width: min(1480px, calc(100% - 72px));
+  width: calc(100% - 144px);
+  max-width: 1480px;
   min-height: 76px;
   margin: 0 auto;
 }
@@ -199,14 +200,14 @@ input::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(16px, 1.8vw, 28px);
+  gap: clamp(12px, 1.35vw, 22px);
   min-width: 0;
 }
 
 .main-nav a {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex: 0 0 auto;
   min-height: 42px;
   color: #d8ddcf;
@@ -232,7 +233,6 @@ input::placeholder {
 .submit-auth,
 .order-now,
 .buy-now,
-.balance,
 .chat-float {
   border: 0;
   font-weight: 800;
@@ -240,7 +240,7 @@ input::placeholder {
 
 .locale {
   height: 34px;
-  padding: 0 16px;
+  padding: 0 14px;
   color: white;
   border: 1px solid #38516a;
   border-radius: 999px;
@@ -255,7 +255,6 @@ input::placeholder {
 .cta,
 .submit-auth,
 .order-now,
-.balance,
 .chat-float {
   color: #17300c;
   background: var(--lime);
@@ -295,6 +294,31 @@ body.logged-in .logout-button {
 
 body.logged-in .login-button {
   min-width: 112px;
+}
+
+@media (max-width: 1600px) {
+  .header-inner {
+    width: calc(100% - 112px);
+    grid-template-columns: 190px minmax(170px, 300px) minmax(0, 1fr) auto auto;
+  }
+
+  .nav-ico {
+    display: none;
+  }
+
+  .main-nav {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1360px) {
+  .header-inner {
+    grid-template-columns: 180px minmax(0, 1fr) auto auto;
+  }
+
+  .site-header .search {
+    display: none;
+  }
 }
 
 .home-screen,
@@ -399,8 +423,7 @@ body.logged-in .login-button {
 .order-now:hover,
 .submit-auth:hover,
 .chat-float:hover,
-.more-button:hover,
-.balance:hover {
+.more-button:hover {
   transform: translateY(-3px);
   filter: brightness(1.05);
 }
@@ -1865,13 +1888,6 @@ td {
   width: 320px;
 }
 
-.balance {
-  height: 40px;
-  padding: 0 22px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-}
-
 .avatar-button {
   width: 52px;
   height: 52px;
@@ -1890,7 +1906,7 @@ td {
 .welcome-card {
   flex: 1;
   display: grid;
-  grid-template-columns: 132px 1fr 180px;
+  grid-template-columns: 132px minmax(0, 1fr);
   align-items: center;
   gap: 28px;
   padding: 28px;
@@ -1917,15 +1933,6 @@ td {
 
 .welcome-card span {
   margin-right: 22px;
-}
-
-.welcome-card button {
-  height: 52px;
-  border: 0;
-  border-radius: 16px;
-  color: #17300c;
-  background: var(--lime);
-  font-size: 20px;
 }
 
 .user-stat {
