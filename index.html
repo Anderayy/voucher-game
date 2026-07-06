@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260706-header-qc">
 </head>
 <body>
   <div class="ambient" aria-hidden="true">
@@ -29,7 +29,10 @@
         <a href="#" data-screen="admin"><span class="nav-ico">ADM</span>Admin</a>
       </nav>
       <button class="locale" id="localeToggle"><span>ID</span> / IDR</button>
-      <button class="login-button" data-screen="auth">Masuk</button>
+      <div class="account-actions">
+        <button class="login-button" id="accountButton" data-screen="auth">Masuk</button>
+        <button class="logout-button" id="headerLogout" type="button">Keluar</button>
+      </div>
     </div>
   </header>
 
@@ -98,10 +101,10 @@
           <button type="button" data-auth-tab="register">Register</button>
         </div>
         <label>Username or Email
-          <div class="input-icon user"><input id="authName" placeholder="Enter your identifier"></div>
+          <div class="input-icon user"><input id="authName" autocomplete="username" placeholder="Enter your identifier"></div>
         </label>
         <label>Password
-          <div class="input-icon lock"><input type="password" placeholder="Password"></div>
+          <div class="input-icon lock"><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password"></div>
         </label>
         <a class="forgot" href="#" id="forgotPassword">Forgot Password?</a>
         <button class="submit-auth" type="submit">MASUK SEKARANG</button>
@@ -361,7 +364,25 @@
     <button data-chat-choice="Bantuan pembayaran">Bantuan pembayaran</button>
     <button data-chat-choice="Masalah voucher">Masalah voucher</button>
   </aside>
+  <div class="payment-modal" id="paymentModal" aria-hidden="true">
+    <section class="payment-dialog" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
+      <button class="modal-close" id="closePaymentModal" type="button">x</button>
+      <span class="payment-state" id="paymentState">MENUNGGU PEMBAYARAN</span>
+      <h2 id="paymentTitle">Scan QRIS untuk membayar</h2>
+      <p id="paymentInvoice">Invoice siap dibuat</p>
+      <div class="qris-box">
+        <img id="qrisImage" alt="QRIS SMASIH DIGITAL">
+      </div>
+      <dl>
+        <div><dt>Merchant</dt><dd id="qrisMerchant">SMASIH DIGITAL</dd></div>
+        <div><dt>Total</dt><dd id="qrisAmount">Rp 0</dd></div>
+      </dl>
+      <div class="modal-actions">
+        <button type="button" id="confirmPayment">Saya Sudah Bayar</button>
+      </div>
+    </section>
+  </div>
   <div class="toast" id="toast"></div>
-  <script src="app.js"></script>
+  <script src="app.js?v=20260706-header-qc"></script>
 </body>
 </html>

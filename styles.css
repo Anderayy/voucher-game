@@ -133,8 +133,8 @@ a {
 
 .header-inner {
   display: grid;
-  grid-template-columns: 180px minmax(260px, 340px) 1fr auto auto;
-  gap: 20px;
+  grid-template-columns: 220px minmax(240px, 420px) minmax(0, 1fr) auto auto;
+  gap: 18px;
   align-items: center;
   width: min(1480px, calc(100% - 72px));
   min-height: 76px;
@@ -198,16 +198,20 @@ input::placeholder {
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 26px;
+  justify-content: center;
+  gap: clamp(16px, 1.8vw, 28px);
+  min-width: 0;
 }
 
 .main-nav a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex: 0 0 auto;
   min-height: 42px;
   color: #d8ddcf;
   font-size: 14px;
+  white-space: nowrap;
   border-bottom: 2px solid transparent;
 }
 
@@ -261,7 +265,36 @@ input::placeholder {
 .login-button {
   min-width: 90px;
   height: 40px;
+  padding: 0 18px;
   border-radius: 12px;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.logout-button {
+  display: none;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 10px;
+  color: white;
+  background: #25384c;
+  font-weight: 800;
+}
+
+body.logged-in .logout-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+body.logged-in .login-button {
+  min-width: 112px;
 }
 
 .home-screen,
@@ -2077,12 +2110,28 @@ body.admin-mode .chat-float {
 
 @media (max-width: 1180px) {
   .header-inner {
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 170px minmax(0, 1fr) auto auto;
+    width: calc(100% - 40px);
+    gap: 14px;
   }
 
-  .search,
+  .search {
+    display: none;
+  }
+
   .main-nav {
-    grid-column: 1 / -1;
+    grid-column: auto;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .main-nav a {
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .locale {
+    padding: 0 14px;
   }
 
   .flash-grid,
@@ -2144,6 +2193,8 @@ body.admin-mode .chat-float {
   }
 
   .main-nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
     gap: 14px;
     overflow-x: auto;
   }
@@ -2416,6 +2467,125 @@ body.admin-mode .chat-float {
   transform: translate(-50%, 0);
 }
 
+.payment-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: none;
+  place-items: center;
+  padding: 22px;
+  background: rgba(2, 10, 18, .78);
+  backdrop-filter: blur(12px);
+}
+
+.payment-modal.show {
+  display: grid;
+}
+
+.payment-dialog {
+  position: relative;
+  width: min(520px, 100%);
+  max-height: calc(100vh - 44px);
+  overflow: auto;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: white;
+  background: #071827;
+  box-shadow: 0 30px 90px rgba(0,0,0,.45);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  color: white;
+  background: rgba(255,255,255,.08);
+}
+
+.payment-state {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #17270b;
+  background: var(--lime);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.payment-dialog h2 {
+  margin: 0 44px 8px 0;
+  font-size: 28px;
+}
+
+.payment-dialog p {
+  margin: 0 0 20px;
+  color: #d8ddcf;
+}
+
+.qris-box {
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  padding: 18px;
+  border-radius: 12px;
+  background: white;
+}
+
+.qris-box img {
+  width: 260px;
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+.payment-dialog dl {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.payment-dialog dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.payment-dialog dt {
+  color: #d8ddcf;
+}
+
+.payment-dialog dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 800;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.modal-actions button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 800;
+  color: #17270b;
+  background: var(--lime);
+}
+
+.modal-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
 .site-footer .socials button {
   display: grid;
   width: 42px;
@@ -2430,6 +2600,10 @@ body.admin-mode .chat-float {
 }
 
 body.user-mode .site-footer {
+  display: none;
+}
+
+body:not(.admin-allowed) [data-screen="admin"] {
   display: none;
 }
 

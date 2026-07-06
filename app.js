@@ -149,11 +149,17 @@ let activeItem = activeProduct.items[2];
 let selectedPayment = "QRIS";
 let discountRate = 0;
 let userName = "Rizky Perdana";
+let currentUser = readCachedUser();
+let authMode = "login";
+let authToken = localStorage.getItem("nyz_token") || "";
+let isRestoringSession = Boolean(authToken && !currentUser);
+let pendingPayment = null;
+let qrisConfig = null;
 let heroIndex = 0;
 let countdownSeconds = 9907;
 let editingProductId = null;
 
-const transactions = [
+let transactions = [
   ["TX-90214", "Mobile Legends Diamonds", "GOPAY", 150000, "SUCCESS"],
   ["TX-90215", "Genshin Impact Crystals", "QRIS", 799000, "PENDING"],
   ["TX-90216", "Free Fire Diamonds", "OVO", 45000, "SUCCESS"],
@@ -171,6 +177,88 @@ const leaderboard = [
   ["Raka FF", 760, "Bronze"],
   ["Sasa Genshin", 690, "Bronze"]
 ];
+
+function readCachedUser() {
+  try {
+    return JSON.parse(localStorage.getItem("nyz_user") || "null");
+  } catch (error) {
+    localStorage.removeItem("nyz_user");
+    localStorage.removeItem("nyz_token");
+    return null;
+  }
+}
+
+function getInvoice(row) {
+  return Array.isArray(row) ? row[0] : row.invoice;
+}
+
+function getTransactionProduct(row) {
+  return Array.isArray(row) ? row[1] : `${row.product}${row.item && row.item !== row.product ? ` ${row.item}` : ""}`;
+}
+
+function getTransactionMethod(row) {
+  return Array.isArray(row) ? row[2] : row.payment;
+}
+
+function getTransactionAmount(row) {
+  return Array.isArray(row) ? row[3] : row.amount;
+}
+
+function getTransactionStatus(row) {
+  return Array.isArray(row) ? row[4] : row.status;
+}
+
+async function api(path, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
+  const response = await fetch(path, { ...options, headers });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Request gagal.");
+  return data;
+}
+
+function setSession(user, token = authToken) {
+  currentUser = user;
+  authToken = token || "";
+  isRestoringSession = false;
+  if (authToken) localStorage.setItem("nyz_token", authToken);
+  else localStorage.removeItem("nyz_token");
+  if (user) localStorage.setItem("nyz_user", JSON.stringify(user));
+  else localStorage.removeItem("nyz_user");
+  userName = user?.name || "Gamer";
+  $("#welcomeName").textContent = `Halo, ${userName}!`;
+  $("#topupBalance").textContent = idr.format(user?.balance || 0);
+  $("#accountButton").textContent = user ? (user.role === "admin" ? "Admin" : "Akun Saya") : "Masuk";
+  $("#accountButton").setAttribute("aria-label", user ? `Buka dashboard ${user.name}` : "Masuk akun");
+  document.body.classList.toggle("admin-allowed", user?.role === "admin");
+  document.body.classList.toggle("logged-in", Boolean(user));
+  if (user?.role === "admin") renderAdmin();
+}
+
+async function logoutUser() {
+  if (authToken) await api("/api/auth/logout", { method: "POST" }).catch(() => {});
+  setSession(null, "");
+  showScreen("auth");
+  toast("Sesi keluar.");
+}
+
+function renderSessionRestoring() {
+  if (!isRestoringSession) return;
+  $("#accountButton").textContent = "Memuat akun...";
+  $("#accountButton").setAttribute("aria-label", "Memulihkan sesi akun");
+  document.body.classList.add("logged-in");
+  document.body.classList.remove("admin-allowed");
+}
+
+function requireLogin() {
+  if (currentUser) return true;
+  showScreen("auth");
+  toast("Login atau register dulu untuk checkout.");
+  return false;
+}
 
 function toast(message) {
   const el = $("#toast");
@@ -265,6 +353,11 @@ function openProduct(id) {
 }
 
 function showScreen(name) {
+  if (name === "admin" && currentUser?.role !== "admin") {
+    if (!currentUser) showScreen("auth");
+    toast(currentUser ? "Akun user tidak punya akses admin." : "Login admin dulu untuk membuka dashboard.");
+    return;
+  }
   const target = $(`#${name}Screen`);
   if (!target) return;
   $$(".screen").forEach((screen) => screen.classList.remove("active"));
@@ -289,9 +382,9 @@ function renderLiveFeed() {
 function renderTransactions() {
   $("#recentStrip").innerHTML = transactions.slice(0, 3).map((row) => `
     <article>
-      <strong>${row[0]}</strong>
-      <p>${row[1]}</p>
-      <span class="status ${row[4] === "PENDING" ? "pending" : "success"}">${row[4]}</span>
+      <strong>${getInvoice(row)}</strong>
+      <p>${getTransactionProduct(row)}</p>
+      <span class="status ${getTransactionStatus(row) === "PENDING" ? "pending" : "success"}">${getTransactionStatus(row)}</span>
     </article>
   `).join("");
 }
@@ -329,6 +422,12 @@ function renderAdmin(tab = "overview") {
   const content = $("#adminContent");
   const title = $("#adminTitle");
   const subtitle = $("#adminSubtitle");
+  if (currentUser?.role !== "admin") {
+    title.textContent = "Akses Ditolak";
+    subtitle.textContent = "Dashboard admin hanya untuk akun staff.";
+    content.innerHTML = "";
+    return;
+  }
 
   if (tab === "overview") {
     title.textContent = "System Overview";
@@ -499,11 +598,11 @@ function bindProductCrud() {
 function transactionRows() {
   return transactions.map((row) => `
     <tr>
-      <td>#${row[0]}</td>
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${idr.format(row[3])}</td>
-      <td><span class="status ${row[4] === "PENDING" ? "pending" : "success"}">${row[4]}</span></td>
+      <td>#${getInvoice(row)}</td>
+      <td>${getTransactionProduct(row)}</td>
+      <td>${getTransactionMethod(row)}</td>
+      <td>${idr.format(getTransactionAmount(row))}</td>
+      <td><span class="status ${getTransactionStatus(row) === "PENDING" ? "pending" : "success"}">${getTransactionStatus(row)}</span></td>
     </tr>
   `).join("");
 }
@@ -544,17 +643,53 @@ function tickCountdown() {
   $("#countdown").textContent = `${h} : ${m} : ${s}`;
 }
 
-function trackOrder() {
-  const value = $("#trackInput").value.trim().replace("#", "").toUpperCase();
-  const found = transactions.find((row) => row[0].toUpperCase() === value);
-  const result = $("#trackResult");
-  if (!found) {
-    result.innerHTML = `<span>Tidak ditemukan</span><h2>Invoice belum terdaftar</h2><p>Coba invoice demo: TX-90214, TX-90215, INV-2841-ML.</p>`;
-    toast("Invoice tidak ditemukan");
+function renderUserRows(rows = transactions.filter((row) => getTransactionStatus(row) === "SUCCESS").slice(0, 5)) {
+  const target = $("#userRows");
+  if (!target) return;
+  const visible = rows.slice(0, 5);
+  target.innerHTML = visible.length ? visible.map((row) => `
+    <tr>
+      <td>#${getInvoice(row)}</td>
+      <td>${Array.isArray(row) ? getTransactionProduct(row) : row.product}</td>
+      <td>${Array.isArray(row) ? "-" : row.item}</td>
+      <td>${idr.format(getTransactionAmount(row))}</td>
+      <td><span class="status ${getTransactionStatus(row) === "PENDING" ? "pending" : "success"}">${getTransactionStatus(row)}</span></td>
+    </tr>
+  `).join("") : `<tr><td colspan="5">Belum ada transaksi untuk akun ini.</td></tr>`;
+}
+
+async function refreshTransactions() {
+  const data = await api("/api/transactions");
+  transactions = data.transactions;
+  renderTransactions();
+  renderAdmin();
+  renderUserRows();
+}
+
+async function refreshMyTransactions() {
+  if (!currentUser) {
+    renderUserRows([]);
     return;
   }
-  result.innerHTML = `<span>${found[4]}</span><h2>#${found[0]} - ${found[1]}</h2><p>Metode ${found[2]} dengan total ${idr.format(found[3])}.</p>`;
-  toast("Status transaksi ditemukan");
+  const data = await api("/api/transactions/mine");
+  renderUserRows(data.transactions);
+}
+
+async function trackOrder() {
+  const value = $("#trackInput").value.trim().replace("#", "").toUpperCase();
+  const result = $("#trackResult");
+  if (!value) {
+    toast("Masukkan invoice dulu");
+    return;
+  }
+  try {
+    const { transaction } = await api(`/api/transactions/${encodeURIComponent(value)}`);
+    result.innerHTML = `<span>${transaction.status}</span><h2>#${transaction.invoice} - ${transaction.product}</h2><p>Metode ${transaction.payment} dengan total ${idr.format(transaction.amount)}.</p>`;
+    toast("Status transaksi ditemukan");
+  } catch (error) {
+    result.innerHTML = `<span>Tidak ditemukan</span><h2>Invoice belum terdaftar</h2><p>Coba invoice demo: TX-90214, TX-90215, INV-2841-ML.</p>`;
+    toast(error.message);
+  }
 }
 
 function copyToClipboard(text, message) {
@@ -562,13 +697,110 @@ function copyToClipboard(text, message) {
   toast(message);
 }
 
+function buildQrisImageUrl(value) {
+  return `/api/qris.svg?data=${encodeURIComponent(value)}`;
+}
+
+function openPaymentModal(transaction, qris) {
+  pendingPayment = transaction;
+  qrisConfig = qris || qrisConfig;
+  $("#paymentState").textContent = transaction.status === "SUCCESS" ? "PEMBAYARAN BERHASIL" : "MENUNGGU PEMBAYARAN";
+  $("#paymentTitle").textContent = transaction.status === "SUCCESS" ? "Pembayaran berhasil" : "Scan QRIS untuk membayar";
+  $("#paymentInvoice").textContent = `Invoice #${transaction.invoice} - ${transaction.product} ${transaction.item}`;
+  $("#qrisMerchant").textContent = qrisConfig?.merchant || "SMASIH DIGITAL";
+  $("#qrisAmount").textContent = idr.format(transaction.amount);
+  $("#qrisImage").src = buildQrisImageUrl(qrisConfig?.value || transaction.invoice);
+  $("#confirmPayment").disabled = transaction.status === "SUCCESS";
+  $("#paymentModal").classList.add("show");
+  $("#paymentModal").setAttribute("aria-hidden", "false");
+}
+
+function closePaymentModal() {
+  $("#paymentModal").classList.remove("show");
+  $("#paymentModal").setAttribute("aria-hidden", "true");
+}
+
+function showSuccessPopup(transaction) {
+  openPaymentModal(transaction, qrisConfig);
+  $("#paymentState").textContent = "PEMBAYARAN BERHASIL";
+  $("#paymentTitle").textContent = "Pembayaran berhasil";
+  $("#confirmPayment").disabled = true;
+  toast(`Pembayaran #${transaction.invoice} berhasil`);
+}
+
+async function createOrder() {
+  if (!requireLogin()) return;
+  const gameUserId = $("#userIdInput").value.trim();
+  const serverId = $("#serverInput").value.trim();
+  const phone = $("#phoneInput").value.trim();
+  if (!gameUserId || !phone) {
+    toast("User ID dan WhatsApp wajib diisi.");
+    return;
+  }
+  try {
+    const data = await api("/api/orders", {
+      method: "POST",
+      body: JSON.stringify({
+        product: activeProduct.name,
+        item: activeItem[0],
+        payment: selectedPayment,
+        amount: totalPrice(),
+        gameUserId,
+        serverId,
+        phone
+      })
+    });
+    qrisConfig = data.qris;
+    transactions.unshift(data.transaction);
+    renderTransactions();
+    renderAdmin();
+    await refreshMyTransactions();
+    renderLiveFeed();
+    if (selectedPayment === "QRIS") {
+      openPaymentModal(data.transaction, data.qris);
+      toast(`Invoice #${data.transaction.invoice} dibuat. Silakan bayar QRIS.`);
+    } else {
+      showSuccessPopup(data.transaction);
+    }
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
+async function confirmPendingPayment() {
+  if (!pendingPayment) return;
+  try {
+    const data = await api(`/api/orders/${encodeURIComponent(pendingPayment.invoice)}/confirm`, { method: "POST" });
+    setSession(data.user);
+    const index = transactions.findIndex((row) => getInvoice(row) === data.transaction.invoice);
+    if (index >= 0) transactions[index] = data.transaction;
+    else transactions.unshift(data.transaction);
+    renderTransactions();
+    renderAdmin();
+    await refreshMyTransactions();
+    showSuccessPopup(data.transaction);
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
 function setupEvents() {
   $$("[data-screen]").forEach((item) => {
     item.addEventListener("click", (event) => {
       event.preventDefault();
+      if (item.dataset.screen === "auth" && isRestoringSession) {
+        toast("Sesi sedang dipulihkan, tunggu sebentar.");
+        return;
+      }
+      if (item.dataset.screen === "auth" && currentUser && !item.classList.contains("danger")) {
+        showScreen(currentUser.role === "admin" ? "admin" : "user");
+        return;
+      }
       showScreen(item.dataset.screen);
     });
   });
+
+  $("#headerLogout").addEventListener("click", logoutUser);
 
   $$("[data-filter]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -584,19 +816,36 @@ function setupEvents() {
     button.addEventListener("click", () => {
       $$("[data-auth-tab]").forEach((tab) => tab.classList.remove("active"));
       button.classList.add("active");
-      $(".submit-auth").textContent = button.dataset.authTab === "register" ? "DAFTAR SEKARANG" : "MASUK SEKARANG";
+      authMode = button.dataset.authTab;
+      $("#authPassword").autocomplete = authMode === "register" ? "new-password" : "current-password";
+      $(".submit-auth").textContent = authMode === "register" ? "DAFTAR SEKARANG" : "MASUK SEKARANG";
     });
   });
 
-  $("#authForm").addEventListener("submit", (event) => {
+  $("#authForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    userName = $("#authName").value.trim() || "Rizky Perdana";
-    $("#welcomeName").textContent = `Halo, ${userName}!`;
-    showScreen("user");
-    toast(`Selamat datang, ${userName}`);
+    const identifier = $("#authName").value.trim();
+    const password = $("#authPassword").value;
+    if (!identifier || password.length < 4) {
+      toast("Isi username/email dan password minimal 4 karakter.");
+      return;
+    }
+    try {
+      const payload = authMode === "register"
+        ? { name: identifier.split("@")[0] || identifier, email: identifier.includes("@") ? identifier : `${identifier}@ngegameyukz.local`, password }
+        : { identifier, password };
+      const endpoint = authMode === "register" ? "/api/auth/register" : "/api/auth/login";
+      const data = await api(endpoint, { method: "POST", body: JSON.stringify(payload) });
+      setSession(data.user, data.token);
+      await refreshMyTransactions();
+      showScreen(data.user.role === "admin" ? "admin" : "user");
+      toast(authMode === "register" ? "Registrasi berhasil." : `Selamat datang, ${data.user.name}`);
+    } catch (error) {
+      toast(error.message);
+    }
   });
 
-  $$("[data-social]").forEach((button) => button.addEventListener("click", () => toast(`Login ${button.dataset.social} disimulasikan`)));
+  $$("[data-social]").forEach((button) => button.addEventListener("click", () => toast(`Login ${button.dataset.social} belum aktif. Gunakan email dan password.`)));
   $("#forgotPassword").addEventListener("click", (event) => { event.preventDefault(); toast("Link reset password dikirim (demo)"); });
   $("#localeToggle").addEventListener("click", () => toast("Bahasa dan mata uang sudah ID / IDR"));
 
@@ -642,14 +891,12 @@ function setupEvents() {
     });
   });
 
-  $("#orderNow").addEventListener("click", () => {
-    const invoice = `TX-${Math.floor(90000 + Math.random() * 999)}`;
-    transactions.unshift([invoice, `${activeProduct.name} ${activeItem[0]}`, selectedPayment, totalPrice(), "SUCCESS"]);
-    renderAdmin();
-    renderTransactions();
-    renderLiveFeed();
-    toast(`Pesanan #${invoice} berhasil dibuat`);
+  $("#orderNow").addEventListener("click", createOrder);
+  $("#closePaymentModal").addEventListener("click", closePaymentModal);
+  $("#paymentModal").addEventListener("click", (event) => {
+    if (event.target.id === "paymentModal") closePaymentModal();
   });
+  $("#confirmPayment").addEventListener("click", confirmPendingPayment);
 
   $("#trackButton").addEventListener("click", trackOrder);
   $("#trackInput").addEventListener("keydown", (event) => { if (event.key === "Enter") trackOrder(); });
@@ -662,6 +909,10 @@ function setupEvents() {
   $$("[data-copy-code]").forEach((button) => button.addEventListener("click", () => copyToClipboard(button.dataset.copyCode, "Kode voucher disalin")));
   $$("[data-legal]").forEach((item) => item.addEventListener("click", (event) => { event.preventDefault(); toast(`${item.dataset.legal} dibuka (demo)`); }));
   $$("[data-setting]").forEach((button) => button.addEventListener("click", () => toast(`${button.dataset.setting} dibuka (demo)`)));
+  $(".settings-card .danger").addEventListener("click", async (event) => {
+    event.preventDefault();
+    await logoutUser();
+  });
   $("#redeemPoints").addEventListener("click", () => toast("Poin ditukar menjadi voucher diskon (demo)"));
   $("#addBalance").addEventListener("click", () => toast("Form isi saldo dibuka (demo)"));
   $("#topupBalance").addEventListener("click", () => toast("Saldo aktif: Rp 1.250.000"));
@@ -677,7 +928,7 @@ function setupEvents() {
   });
 }
 
-function init() {
+async function init() {
   renderFlashSale();
   renderPopular();
   renderNominals();
@@ -689,6 +940,31 @@ function init() {
   renderAdmin();
   setupEvents();
   bindProductButtons();
+  renderUserRows();
+  renderSessionRestoring();
+  if (currentUser && authToken) setSession(currentUser, authToken);
+  if (authToken) {
+    try {
+      const data = await api("/api/auth/me");
+      setSession(data.user);
+      await refreshMyTransactions();
+    } catch (error) {
+      setSession(null, "");
+    }
+  } else {
+    setSession(null, "");
+  }
+  try {
+    const data = await api("/api/qris");
+    qrisConfig = data.qris;
+  } catch (error) {
+    qrisConfig = null;
+  }
+  try {
+    await refreshTransactions();
+  } catch (error) {
+    toast("Transaksi server belum bisa dimuat.");
+  }
   setInterval(tickCountdown, 1000);
   setInterval(() => rotateHero(), 6000);
   setInterval(renderLiveFeed, 5000);
